@@ -54,10 +54,13 @@ public class FriendDAO {
         return friendList;
     }
 
-    //친구 추가함수 인자(나, 추가할 친구) (이미 있는 친구 추가를 막는 기능?)(고건 컨트롤러가 해야하구연)
+    //친구 추가함수 인자(나, 추가할 친구) (이미 있는 친구 추가를 막는 기능 추가)
     public int InsertFriend(String me, String you) {
-        con = db.getConnection();
         int FriendOK; //친구 추가 되었는지 숫자로 전달(디비에서 값 머오는지 확인 필요)
+        if(friendDuplicateCheck(me, you)){
+            return FriendOK = 0;//실패
+        }
+        con = db.getConnection();
         try {
             String sql = "INSERT INTO FRIEND(user_id, friend_id) VALUES ('" + me + "','" + you + "')";
             pstmt = con.prepareStatement(sql);
@@ -82,6 +85,27 @@ public class FriendDAO {
         }
         return BanOK;
     }
+    //친구 검증함수(이미 있나?)
+    public boolean friendDuplicateCheck(String me, String you){
+        con = db.getConnection();
+        int duplOK;
+        try{
+            String sql = "SELECT count(*) cnt FROM FRIEND WHERE user_id=? AND friend_id=?";
+            pstmt = con.prepareStatement(sql);
+                        pstmt.setString(1, me);
+                        pstmt.setString(1, you);
+                        rs = pstmt.executeQuery();
+                        if(rs.next()){
+                            int cnt = rs.getInt("cnt");
+                            if(cnt > 0){
+                                return true;
+                            }
+                        }
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        return false;
+    }
 }
 
-}
+
