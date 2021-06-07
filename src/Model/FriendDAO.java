@@ -93,7 +93,7 @@ public class FriendDAO {
             String sql = "SELECT count(*) cnt FROM FRIEND WHERE user_id=? AND friend_id=?";
             pstmt = con.prepareStatement(sql);
                         pstmt.setString(1, me);
-                        pstmt.setString(1, you);
+                        pstmt.setString(2, you);
                         rs = pstmt.executeQuery();
                         if(rs.next()){
                             int cnt = rs.getInt("cnt");
